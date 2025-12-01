@@ -149,9 +149,7 @@ class TeacherService
         };
     }
 
-    /**
-     * Submission ma'lumotlarini qurish
-     */
+
     public function buildSubmissionData(?DeadlineSubmission $submission, $deadline): array
     {
         $baseData = [
@@ -184,9 +182,7 @@ class TeacherService
         return $baseData;
     }
 
-    /**
-     * Baholash matritsasini qurish
-     */
+
     public function buildGradingMatrix(GroupSubjectTeacher $gst): array
     {
         $deadlines = $gst->getDeadlines();
@@ -226,9 +222,7 @@ class TeacherService
         return $matrixData;
     }
 
-    /**
-     * Baholash validatsiyasi
-     */
+
     public function validateGrading(DeadlineSubmission $submission, int $points, string $method): array
     {
         $maxPoints = $submission->getDeadline()->getMaxPoints();
@@ -257,9 +251,7 @@ class TeacherService
         ];
     }
 
-    /**
-     * GST ma'lumotlarini olish
-     */
+
     public function getGSTInfo(GroupSubjectTeacher $gst): array
     {
         return [
@@ -270,9 +262,7 @@ class TeacherService
         ];
     }
 
-    /**
-     * Deadline lar ro'yxatini tayyorlash
-     */
+
     public function prepareDeadlinesList(array $deadlines): array
     {
         return array_map(function($deadline) {

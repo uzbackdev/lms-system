@@ -16,14 +16,15 @@ class CourseController extends AbstractController
     public function createCourse(CourseRepository $courseRepository , EntityManagerInterface $em , int $courseNumber):JsonResponse{
         $existCourse = $courseRepository->findOneBy(['number' => $courseNumber]);
         if($existCourse){
-            return $this->json(["Bu kurs allaqachon yaratilgan"] , 400);
+            return $this->json("Bu kurs allaqachon yaratilgan", 400);
         }
         $course = new Course();
         $course->setNumber($courseNumber);
         $em->persist($course);
         $em->flush();
-        return $this->json(['id'=>$course->getId(),
-            'number'=>$course->getNumber()
+        return $this->json([
+            'id' => $course->getId(),
+            'number' => $course->getNumber()
         ]);
     }
 }

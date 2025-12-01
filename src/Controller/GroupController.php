@@ -32,7 +32,7 @@ class GroupController extends AbstractController
             return $this->json("course_id VA faculty_id kiritilishi kerak", 400);
         }
 
-        $existGroup = $groupRepository->findOneBy(['group_number' => $number]);
+        $existGroup = $groupRepository->findOneBy(['number' => $number]);
         $course = $courseRepository->find($courseId);
         $faculty = $facultyRepository->find($facultyId);
 

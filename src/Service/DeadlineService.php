@@ -18,14 +18,12 @@ class DeadlineService
         private SemesterRepository $semesterRepository
     ) {}
 
-    /**
-     * Deadline uchun barcha validatsiyalarni bajaradi
-     */
+
     public function validateDeadline(GroupSubjectTeacher $gst, \DateTimeInterface $deadlineDate, int $newPoints, ?int $excludeDeadlineId = null): array
     {
         $errors = [];
 
-        // 1. Semester oralig'ida ekanligini tekshirish
+
         $semesterValidation = $this->validateSemesterDate($deadlineDate);
         if (!$semesterValidation['isValid']) {
             $errors[] = $semesterValidation['error'];
@@ -37,7 +35,7 @@ class DeadlineService
             $errors[] = $duplicateValidation['error'];
         }
 
-        // 3. Ballar validatsiyasi
+
         $pointsValidation = $this->validateDeadlinePoints($gst, $newPoints, $excludeDeadlineId);
         if (!$pointsValidation['isValid']) {
             $errors = array_merge($errors, $pointsValidation['errors']);
@@ -52,9 +50,7 @@ class DeadlineService
         ];
     }
 
-    /**
-     * Sana semester oralig'ida ekanligini tekshiradi
-     */
+
     private function validateSemesterDate(\DateTimeInterface $date): array
     {
         $activeSemester = $this->semesterRepository->findOneBy(['isActive' => true]);
@@ -83,9 +79,7 @@ class DeadlineService
         ];
     }
 
-    /**
-     * Bir xil sana va guruh/fan uchun bitta deadline bo'lishini tekshiradi
-     */
+
     private function validateDuplicateDeadline(GroupSubjectTeacher $gst, \DateTimeInterface $date, ?int $excludeDeadlineId = null): array
     {
         $dateOnly = $date->format('Y-m-d');
@@ -118,12 +112,12 @@ class DeadlineService
 
         $errors = [];
 
-        // Minimal ball tekshirish
+
         if ($newPoints < self::MIN_POINTS) {
             $errors[] = "Minimal ball: " . self::MIN_POINTS;
         }
 
-        // Maksimal umumiy ball tekshirish
+
         if ($newTotal > self::MAX_TOTAL_POINTS) {
             $remaining = self::MAX_TOTAL_POINTS - $currentTotal;
             $errors[] = "Umumiy ball {$newTotal}/" . self::MAX_TOTAL_POINTS .
