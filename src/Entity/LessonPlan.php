@@ -58,11 +58,9 @@ class LessonPlan
         return $this;
     }
 
-    // ✅ removeMaterial metodini qo'shing
     public function removeMaterial(LessonMaterial $material): self
     {
         if ($this->materials->removeElement($material)) {
-            // set the owning side to null (unless already changed)
             if ($material->getLessonPlan() === $this) {
                 $material->setLessonPlan(null);
             }
@@ -71,7 +69,6 @@ class LessonPlan
         return $this;
     }
 
-    // ✅ getMaterials metodini qo'shing (agar yo'q bo'lsa)
 
 
 

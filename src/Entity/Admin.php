@@ -14,7 +14,7 @@ class Admin
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'admin', targetEntity: Person::class, cascade: ['persist'])]
+    #[ORM\OneToOne(targetEntity: Person::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'person_id', referencedColumnName: 'id', nullable: false, unique: true)]
     private Person $person;
 

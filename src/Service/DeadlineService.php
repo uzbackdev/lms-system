@@ -101,10 +101,6 @@ class DeadlineService
             'isValid' => true
         ];
     }
-
-    /**
-     * Ballar validatsiyasi
-     */
     public function validateDeadlinePoints(GroupSubjectTeacher $gst, int $newPoints, ?int $excludeDeadlineId = null): array
     {
         $currentTotal = $this->deadlineRepository->getTotalPointsForSubject($gst->getId(), $excludeDeadlineId);

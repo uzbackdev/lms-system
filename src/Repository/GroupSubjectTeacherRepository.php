@@ -75,10 +75,6 @@ class GroupSubjectTeacherRepository extends ServiceEntityRepository
     }
 
 
-
-
-
-
     public function getTeacherWorkload(int $teacherId): int
     {
         return $this->createQueryBuilder('gst')

@@ -12,5 +12,24 @@ class GroupRepository extends ServiceEntityRepository
     {
         parent::__construct($registry , Group::class);
     }
+    public function findByFacultyAndCourse(int $facultyId, ?int $courseId = null): array
+    {
+        $qb = $this->createQueryBuilder('g')
+            ->join('g.course', 'c')
+            ->addSelect('c')
+            ->andWhere('g.faculty = :facultyId')
+            ->setParameter('facultyId', $facultyId);
+
+        if ($courseId) {
+            $qb->andWhere('c.id = :courseId')
+                ->setParameter('courseId', $courseId);
+        }
+
+        return $qb
+            ->orderBy('c.number', 'ASC')
+            ->addOrderBy('g.groupNumber', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
 }

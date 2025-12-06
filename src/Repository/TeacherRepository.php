@@ -15,25 +15,24 @@ class TeacherRepository extends ServiceEntityRepository
     }
     public function findTeachersBySubjectWithCommonCheck(Subject $subject): array
     {
-        $qb = $this->createQueryBuilder('t');
+        $qb = $this->createQueryBuilder('t')
+            ->join('t.person', 'p');
 
         if ($subject->isCommonFirstYear()) {
-
             return $qb
-                ->orderBy('t.surname', 'ASC')
-                ->addOrderBy('t.name', 'ASC')
+                ->orderBy('p.surname', 'ASC')
+                ->addOrderBy('p.name', 'ASC')
                 ->getQuery()
                 ->getResult();
         }
-
 
         return $qb
             ->join('t.faculty', 'f')
             ->join('App\Entity\Subject', 's', 'WITH', 's.faculty = f')
             ->where('s.id = :subjectId')
             ->setParameter('subjectId', $subject->getId())
-            ->orderBy('t.surname', 'ASC')
-            ->addOrderBy('t.name', 'ASC')
+            ->orderBy('p.surname', 'ASC')
+            ->addOrderBy('p.name', 'ASC')
             ->getQuery()
             ->getResult();
     }

@@ -29,8 +29,8 @@ class GSTQueryController extends AbstractController
             'success' => true,
             'data' => array_map(fn($t) => [
                 'id' => $t->getId(),
-                'name' => $t->getName(),
-                'surname' => $t->getSurname(),
+                'name' => $t->getPerson()->getName(),
+                'surname' => $t->getPerson()->getSurname(),
                 'faculty' => $t->getFaculty()->getName(),
             ], $teachers)
         ]);

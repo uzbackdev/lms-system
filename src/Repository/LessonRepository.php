@@ -112,7 +112,7 @@ class LessonRepository extends ServiceEntityRepository
     }
     public function findByGroupSubjectAndTeacher(int $groupId, int $subjectId, int $teacherId): array
     {
-        $query = $this->createQueryBuilder('l')
+        return $this->createQueryBuilder('l')
             ->join('l.groupSubjectTeacher', 'gst')
             ->join('gst.group', 'g')
             ->join('gst.subject', 's')
@@ -123,18 +123,8 @@ class LessonRepository extends ServiceEntityRepository
             ->setParameter('groupId', $groupId)
             ->setParameter('subjectId', $subjectId)
             ->setParameter('teacherId', $teacherId)
-            ->getQuery();
-
-
-        $sql = $query->getSQL();
-        $params = $query->getParameters();
-        error_log("SQL: " . $sql);
-        error_log("Params: " . print_r($params, true));
-
-        $result = $query->getResult();
-        error_log("Result count: " . count($result));
-
-        return $result;
+            ->getQuery()
+            ->getResult();
     }
     public function findLessonsByDate(\DateTimeInterface $date): array
     {

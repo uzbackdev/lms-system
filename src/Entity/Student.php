@@ -15,26 +15,12 @@ class Student
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(nullable: false)]
-    #[Assert\NotBlank]
-    private string $surname;
-
-    #[ORM\Column(nullable: false)]
-    #[Assert\NotBlank]
-    private string $name;
-
-    #[ORM\Column(nullable: false)]
-    #[Assert\NotBlank]
-    private string $address;
-
     #[ORM\ManyToOne(inversedBy: 'students')]
     #[ORM\JoinColumn(nullable: false)]
     private Group $group;
 
-
-
-    #[ORM\OneToOne(inversedBy: 'student', targetEntity: Person::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'person_id', referencedColumnName: 'id', nullable: true, unique: true)]
+    #[ORM\OneToOne(targetEntity: Person::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'person_id', referencedColumnName: 'id', unique: true, nullable: true)]
     private Person $person;
 
     #[ORM\Column(type: 'integer')]
@@ -90,42 +76,10 @@ class Student
         $this->id = $id;
     }
 
-    public function getSurname(): string
-    {
-        return $this->surname;
-    }
-
-    public function setSurname(string $surname): void
-    {
-        $this->surname = $surname;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    public function getAddress(): string
-    {
-        return $this->address;
-    }
-
-    public function setAddress(string $address): void
-    {
-        $this->address = $address;
-    }
-
     public function setGroup(Group $group): void
     {
         $this->group = $group;
     }
-
-
 
 
 }

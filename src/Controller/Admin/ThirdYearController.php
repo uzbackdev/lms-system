@@ -1,0 +1,124 @@
+<?php
+
+namespace App\Controller\Admin;
+
+use App\Entity\GroupSubjectTeacher;
+use App\Repository\GroupRepository;
+use App\Repository\GroupSubjectTeacherRepository;
+use App\Repository\SubjectRepository;
+use App\Repository\TeacherRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Attribute\Route;
+
+#[Route('/admin/group-subject-teacher')]
+class ThirdYearController extends AbstractController
+{
+    #[Route('/subjects/third-year/by-group/{groupId}', methods: ['GET'])]
+    public function getThirdYearSubjectsByGroup(
+        int $groupId,
+        GroupRepository $groupRepository,
+        SubjectRepository $subjectRepository
+    ): JsonResponse {
+        $group = $groupRepository->find($groupId);
+
+        if (!$group) {
+            return $this->json(['error' => 'Guruh topilmadi'], 404);
+        }
+
+        $facultyId = $group->getFaculty()->getId();
+        $subjects = $subjectRepository->findThirdYearSubjectsForGroupFaculty($facultyId);
+
+        return $this->json([
+            'success' => true,
+            'data' => array_map(fn($s) => [
+                'id' => $s->getId(),
+                'name' => $s->getSubjectName(),
+                'faculty' => $s->getFaculty()->getName(),
+                'courseNumber' => $s->getCourseNumber(),
+            ], $subjects)
+        ]);
+    }
+
+    #[Route('/third-year', methods: ['POST'])]
+    public function createThirdYear(
+        Request $request,
+        GroupRepository $groupRepository,
+        SubjectRepository $subjectRepository,
+        TeacherRepository $teacherRepository,
+        GroupSubjectTeacherRepository $gstRepository,
+        EntityManagerInterface $em
+    ): JsonResponse {
+        $data = json_decode($request->getContent(), true);
+
+        $groupId = $data['group_id'] ?? null;
+        $subjectId = $data['subject_id'] ?? null;
+        $teacherId = $data['teacher_id'] ?? null;
+
+        if (!$groupId || !$subjectId || !$teacherId) {
+            return $this->json(['error' => 'group_id, subject_id va teacher_id kiritilishi kerak'], 400);
+        }
+
+        $group = $groupRepository->find($groupId);
+        $subject = $subjectRepository->find($subjectId);
+        $teacher = $teacherRepository->find($teacherId);
+
+        if (!$group || !$subject || !$teacher) {
+            return $this->json(['error' => "Guruh, fan yoki o'qituvchi topilmadi"], 404);
+        }
+
+        if ($gstRepository->existsByGroupAndSubject($groupId, $subjectId)) {
+            return $this->json(['error' => "Bu guruhga bu fan allaqachon boshqa o'qituvchiga biriktirilgan"], 400);
+        }
+
+        if ($group->getCourse()->getNumber() !== 3) {
+            return $this->json(['error' => "Bu metod faqat 3-kurslar uchun"], 400);
+        }
+
+        if (!$gstRepository->canTeacherTakeMoreSubjects($teacherId)) {
+            return $this->json([
+                'error' => "Oʻqituvchining dars yuki toʻla (maksimum 10 soat)"
+            ], 400);
+        }
+
+        $facultyId = $subject->getFaculty()->getId();
+        $firstSection = [1, 2];
+        $secondSection = [3, 4];
+        $thirdSection = [5, 6];
+
+        $validFaculties = in_array($facultyId, $firstSection) ? $firstSection :
+            (in_array($facultyId, $secondSection) ? $secondSection :
+                (in_array($facultyId, $thirdSection) ? $thirdSection : []));
+
+        if (empty($validFaculties)) {
+            return $this->json(['error' => "Fan noma'lum fakultet toifasiga tegishli"], 400);
+        }
+
+        if (!in_array($teacher->getFaculty()->getId(), $validFaculties)) {
+            return $this->json(['error' => "Bu fan uchun tanlangan ustoz ushbu fakultetlar guruhiga tegishli emas"], 400);
+        }
+
+        $gst = new GroupSubjectTeacher();
+        $gst->setGroup($group);
+        $gst->setSubject($subject);
+        $gst->setTeacher($teacher);
+
+        $em->persist($gst);
+        $em->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => "3-kurs uchun to'g'ri biriktirildi",
+            'data' => [
+                'id' => $gst->getId(),
+                'group' => $group->getGroupNumber(),
+                'course' => $group->getCourse()->getNumber(),
+                'subject' => $subject->getSubjectName(),
+                'teacher' => $teacher->getPerson()->getName() . ' ' . $teacher->getPerson()->getSurname(),
+                'department' => $teacher->getFaculty()->getName()
+            ]
+        ]);
+    }
+}
