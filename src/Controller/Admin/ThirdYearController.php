@@ -79,7 +79,7 @@ class ThirdYearController extends AbstractController
 
         if (!$gstRepository->canTeacherTakeMoreSubjects($teacherId)) {
             return $this->json([
-                'error' => "Oʻqituvchining dars yuki toʻla (maksimum 10 soat)"
+                'error' => "Oʻqituvchining darsi to'la"
             ], 400);
         }
 
@@ -88,9 +88,15 @@ class ThirdYearController extends AbstractController
         $secondSection = [3, 4];
         $thirdSection = [5, 6];
 
-        $validFaculties = in_array($facultyId, $firstSection) ? $firstSection :
-            (in_array($facultyId, $secondSection) ? $secondSection :
-                (in_array($facultyId, $thirdSection) ? $thirdSection : []));
+        if (in_array($facultyId, $firstSection)) {
+            $validFaculties = $firstSection;
+        } elseif (in_array($facultyId, $secondSection)) {
+            $validFaculties = $secondSection;
+        } elseif (in_array($facultyId, $thirdSection)) {
+            $validFaculties = $thirdSection;
+        } else {
+            $validFaculties = [];
+        }
 
         if (empty($validFaculties)) {
             return $this->json(['error' => "Fan noma'lum fakultet toifasiga tegishli"], 400);

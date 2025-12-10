@@ -14,6 +14,7 @@ use App\Repository\StudentRepository;
 use App\Repository\SubjectRepository;
 use App\Repository\TeacherRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Random\RandomException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class TeacherService
@@ -45,9 +46,12 @@ class TeacherService
         return $login;
     }
 
+    /**
+     * @throws RandomException
+     */
     public function generatePassword(): string
     {
-        // 8 ta belgi: a-z harflari va 0-9 raqamlari
+
         $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
         $password = '';
         $max = strlen($characters) - 1;

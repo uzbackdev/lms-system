@@ -82,14 +82,14 @@ class PersonCreateService
             $errors[] = 'Noto\'g\'ri foydalanuvchi turi';
         }
 
-        // Login format
+
         if (!empty($data['login'])) {
             if (!preg_match('/^[A-Z0-9]{8}$/', $data['login'])) {
                 $errors[] = 'Login 8 ta belgidan iborat bo\'lishi kerak (faqat A-Z harflari va 0-9 raqamlari)';
             }
         }
 
-        // Parol format
+
         if (!empty($data['password'])) {
             if (!preg_match('/^[a-z0-9]{8}$/', $data['password'])) {
                 $errors[] = 'Parol 8 ta belgidan iborat bo\'lishi kerak (faqat a-z harflari va 0-9 raqamlari)';

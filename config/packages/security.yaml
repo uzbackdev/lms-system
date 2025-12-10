@@ -21,7 +21,7 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-        # Asosiy firewall - barcha route'lar uchun
+
         main:
             pattern: ^/
             stateless: true
@@ -29,16 +29,16 @@ security:
             jwt: ~
 
     access_control:
-        # Login endpoint - hamma uchun ochiq
+
         - { path: ^/login, roles: PUBLIC_ACCESS }
 
-        # Admin route'lar
+
         - { path: ^/admin/, roles: ROLE_ADMIN }
 
-        # Teacher route'lar
+
         - { path: ^/teacher/, roles: ROLE_TEACHER }
 
-        # Student route'lar
+
         - { path: ^/student/, roles: ROLE_STUDENT }
 
 

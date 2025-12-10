@@ -68,24 +68,17 @@ class FileUploadService
         return false;
     }
 
-    public function getAllowedExtensions(): array
-    {
-        return $this->allowedExtensions;
-    }
-
-    public function getMaxFileSize(): int
-    {
-        return $this->maxFileSize;
-    }
-
     private function formatBytes(int $bytes): string
     {
         $units = ['B', 'KB', 'MB', 'GB'];
         $bytes = max($bytes, 0);
-        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        if ($bytes > 0) {
+            $pow = floor(log($bytes) / log(1024));
+        } else {
+            $pow = 0;
+        }
         $pow = min($pow, count($units) - 1);
         $bytes /= pow(1024, $pow);
-
         return round($bytes, 2) . ' ' . $units[$pow];
     }
 }

@@ -87,8 +87,13 @@ class SecondYearController extends AbstractController
         $firstSection = [1, 2, 3];
         $secondSection = [4, 5, 6];
 
-        $validFaculties = in_array($facultyId, $firstSection) ? $firstSection :
-            (in_array($facultyId, $secondSection) ? $secondSection : []);
+        if (in_array($facultyId, $firstSection)) {
+            $validFaculties = $firstSection;
+        } elseif (in_array($facultyId, $secondSection)) {
+            $validFaculties = $secondSection;
+        } else {
+            $validFaculties = [];
+        }
 
         if (empty($validFaculties)) {
             return $this->json(['error' => "Fan noma'lum fakultet toifasiga tegishli"], 400);

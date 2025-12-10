@@ -42,14 +42,12 @@ class LessonPlanService
                 }
             }
         }
-
         usort($allDates, function($a, $b) {
             return strtotime($a) - strtotime($b);
         });
 
         return $allDates;
     }
-
     public function getLessonPlansSimple(int $groupId, int $subjectId, int $teacherId): array
     {
         $activeSemester = $this->semesterRepository->findActiveSemester();

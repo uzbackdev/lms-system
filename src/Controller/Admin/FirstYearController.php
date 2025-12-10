@@ -67,7 +67,7 @@ class FirstYearController extends AbstractController
 
         if (!$gstRepository->canTeacherTakeMoreSubjects($teacherId)) {
             return $this->json([
-                'error' => "Oʻqituvchining dars yuki toʻla (maksimum 10 soat)"
+                'error' => "Oʻqituvchining dars yuki toʻla"
             ], 400);
         }
 
