@@ -38,11 +38,6 @@ class DeadlineSubmissionRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    // ==================== YANGI METODLAR ====================
-
-    /**
-     * Ma'lum bir GST (GroupSubjectTeacher) bo'yicha barcha submissions larni olish
-     */
     public function findByGST(int $gstId): array
     {
         return $this->createQueryBuilder('ds')
@@ -76,9 +71,7 @@ class DeadlineSubmissionRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    /**
-     * Guruh bo'yicha barcha submissions larni olish
-     */
+
     public function findByGroup(int $groupId): array
     {
         return $this->createQueryBuilder('ds')
@@ -86,18 +79,17 @@ class DeadlineSubmissionRepository extends ServiceEntityRepository
             ->join('d.groupSubjectTeacher', 'gst')
             ->join('gst.group', 'g')
             ->join('ds.student', 's')
+            ->join('s.person', 'sp')
+            ->addSelect('sp')
             ->where('g.id = :groupId')
             ->setParameter('groupId', $groupId)
-            ->orderBy('s.surname', 'ASC')
-            ->addOrderBy('s.name', 'ASC')
+            ->orderBy('sp.surname', 'ASC')
+            ->addOrderBy('sp.name', 'ASC')
             ->addOrderBy('d.deadlineDate', 'ASC')
             ->getQuery()
             ->getResult();
     }
 
-    /**
-     * Ma'lum bir student va GST bo'yicha submissions larni olish
-     */
     public function findByStudentAndGST(int $studentId, int $gstId): array
     {
         return $this->createQueryBuilder('ds')

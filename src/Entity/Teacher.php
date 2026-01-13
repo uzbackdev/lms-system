@@ -13,22 +13,17 @@ class Teacher
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private string $name;
-    #[ORM\Column]
-    private string $surname;
-
     #[ORM\ManyToOne(inversedBy: 'teachers')]
     #[ORM\JoinColumn(nullable: true , onDelete: "CASCADE")]
     private Faculty $faculty;
 
 
-    #[ORM\OneToOne(inversedBy: 'teacher', targetEntity: Person::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'person_id', referencedColumnName: 'id', nullable: true, unique: true)]
+    #[ORM\OneToOne(targetEntity: Person::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'person_id', referencedColumnName: 'id', unique: true, nullable: true)]
     private Person $person;
 
     #[ORM\ManyToMany(targetEntity: Subject::class, inversedBy: 'teachers')]
-    private Collection $subjects; // ✅ ManyToMany
+    private Collection $subjects;
 
 
     public function getId(): ?int
@@ -41,25 +36,6 @@ class Teacher
         $this->id = $id;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    public function getSurname(): string
-    {
-        return $this->surname;
-    }
-
-    public function setSurname(string $surname): void
-    {
-        $this->surname = $surname;
-    }
 
     public function getPerson(): Person
     {

@@ -54,7 +54,7 @@ class GroupSubjectTeacherRepository extends ServiceEntityRepository
             ->leftJoin('g.course', 'c')
             ->where('s.id = :subjectId')
             ->setParameter('subjectId', $subjectId)
-            ->select('gst.id', 'g.groupNumber as groupNumber', 'c.number as courseNumber',
+            ->select('gst.id', 'g.number as groupNumber', 'c.number as courseNumber',
                 't.name as teacherName', 't.surname as teacherSurname')
             ->getQuery()
             ->getResult();
@@ -73,10 +73,6 @@ class GroupSubjectTeacherRepository extends ServiceEntityRepository
 
         return $result !== null;
     }
-
-
-
-
 
 
     public function getTeacherWorkload(int $teacherId): int

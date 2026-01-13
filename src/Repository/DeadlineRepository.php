@@ -45,9 +45,6 @@ class DeadlineRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * Bir xil sana va guruh/fan uchun deadline mavjudligini tekshiradi
-     */
     public function findByGroupSubjectAndDate(int $gstId, string $date, ?int $excludeDeadlineId = null): ?Deadline
     {
         $qb = $this->createQueryBuilder('d')

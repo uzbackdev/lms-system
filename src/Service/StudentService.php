@@ -15,31 +15,6 @@ class StudentService
 
     ) {}
 
-    public function generateLogin(int $studentId): string {
-        return 'student' . $studentId;
-    }
-
-    public function generatePassword(int $studentId): string {
-        return 'password' . $studentId;
-    }
-
-    public function createPersonWithAuth(int $studentId): array
-    {
-        $login = $this->generateLogin($studentId);
-        $plainPassword = $this->generatePassword($studentId);
-
-        $person = new Person();
-        $person->setLogin($login);
-        $person->setPassword($this->passwordHasher->hashPassword($person, $plainPassword));
-        $person->setRoles(['ROLE_STUDENT']);
-
-        return [
-            'person' => $person,
-            'plain_password' => $plainPassword,
-            'login' => $login
-        ];
-    }
-
     public function getCurrentWeekSchedule(int $groupId): array
     {
         $lessons = $this->lessonRepository->findByGroup($groupId);
@@ -68,16 +43,14 @@ class StudentService
 
     private function getCurrentWeekDates(): array
     {
-        $today = new \DateTime();
-        $monday = clone $today;
-        $monday->modify('monday this week');
+        $monday = new \DateTime('monday this week');
 
         return [
-            'monday' => $monday->format('Y-m-d'),
-            'tuesday' => $monday->modify('+1 day')->format('Y-m-d'),
-            'wednesday' => $monday->modify('+1 day')->format('Y-m-d'),
-            'thursday' => $monday->modify('+1 day')->format('Y-m-d'),
-            'friday' => $monday->modify('+1 day')->format('Y-m-d')
+            'monday'    => $monday->format('Y-m-d'),
+            'tuesday'   => (clone $monday)->modify('+1 day')->format('Y-m-d'),
+            'wednesday' => (clone $monday)->modify('+2 days')->format('Y-m-d'),
+            'thursday'  => (clone $monday)->modify('+3 days')->format('Y-m-d'),
+            'friday'    => (clone $monday)->modify('+4 days')->format('Y-m-d')
         ];
     }
 }

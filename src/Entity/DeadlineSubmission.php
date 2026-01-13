@@ -31,7 +31,7 @@ class DeadlineSubmission
     private \DateTimeInterface $submittedAt;
 
     #[ORM\Column(type: 'string', length: 20)]
-    private string $status = 'submitted'; // submitted, graded, returned
+    private string $status = 'submitted';
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $points = null;
@@ -46,44 +46,26 @@ class DeadlineSubmission
     {
         $this->submittedAt = new \DateTime();
     }
-
-    // ==================== YANGI METODLAR ====================
-
-    /**
-     * Baholash mumkinligini tekshiradi
-     */
     public function canBeGraded(): bool
     {
         return $this->status === 'submitted' && $this->points === null;
     }
 
-    /**
-     * Baholanganligini tekshiradi
-     */
     public function isGraded(): bool
     {
         return $this->status === 'graded' && $this->points !== null;
     }
 
-    /**
-     * Qaysi HTTP method dan foydalanish kerakligini aniqlaydi
-     */
     public function getGradingMethod(): string
     {
         return $this->isGraded() ? 'PUT' : 'POST';
     }
 
-    /**
-     * Fayl yuklab olish URL ini qaytaradi
-     */
     public function getDownloadUrl(): string
     {
         return '/uploads/' . $this->fileName;
     }
 
-    /**
-     * Baholash ma'lumotlarini qaytaradi
-     */
     public function getGradingInfo(): array
     {
         return [
@@ -94,7 +76,7 @@ class DeadlineSubmission
         ];
     }
 
-    // ==================== GETTERS/SETTERS ====================
+
 
     public function getId(): ?int { return $this->id; }
 

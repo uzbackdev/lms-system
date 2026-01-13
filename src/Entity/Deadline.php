@@ -40,7 +40,7 @@ class Deadline
     #[ORM\Column(type: 'integer')]
     private int $maxPoints;
 
-    #[ORM\Column(type: 'date')] // 🔥 Endi faqat sana
+    #[ORM\Column(type: 'date')]
     private \DateTimeInterface $deadlineDate;
 
     #[ORM\Column(type: 'datetime')]
@@ -51,12 +51,12 @@ class Deadline
         $this->createdAt = new \DateTime();
     }
 
-    // Getters/Setters
+
     public function getId(): ?int { return $this->id; }
     public function getGroupSubjectTeacher(): GroupSubjectTeacher { return $this->groupSubjectTeacher; }
     public function setGroupSubjectTeacher(GroupSubjectTeacher $gst): void { $this->groupSubjectTeacher = $gst; }
 
-    // Yangi getter/setter lar
+
     public function getSemester(): Semester { return $this->semester; }
     public function setSemester(Semester $semester): void { $this->semester = $semester; }
 
@@ -71,10 +71,9 @@ class Deadline
     public function getMaxPoints(): int { return $this->maxPoints; }
     public function setMaxPoints(int $maxPoints): void { $this->maxPoints = $maxPoints; }
 
-    // DeadlineDate endi faqat sana
     public function getDeadlineDate(): \DateTimeInterface { return $this->deadlineDate; }
     public function setDeadlineDate(\DateTimeInterface $deadlineDate): void {
-        // Faqat sana qismini olamiz
+
         $this->deadlineDate = \DateTime::createFromFormat('Y-m-d', $deadlineDate->format('Y-m-d'));
     }
 

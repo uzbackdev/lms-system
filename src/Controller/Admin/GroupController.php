@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Group;
 use App\Repository\CourseRepository;
@@ -9,9 +9,9 @@ use App\Repository\GroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\Routing\Attribute\Route;
+#[Route('/admin')]
 class GroupController extends AbstractController
 {
     #[Route('/create-group/{number}', methods: ['POST'])]
@@ -32,7 +32,7 @@ class GroupController extends AbstractController
             return $this->json("course_id VA faculty_id kiritilishi kerak", 400);
         }
 
-        $existGroup = $groupRepository->findOneBy(['group_number' => $number]);
+        $existGroup = $groupRepository->findOneBy(['number' => $number]);
         $course = $courseRepository->find($courseId);
         $faculty = $facultyRepository->find($facultyId);
 

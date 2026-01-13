@@ -12,10 +12,6 @@ class StudentRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Student::class);
     }
-    public function findByLogin(string $login): ?Student
-    {
-        return $this->findOneBy(['login' => strtolower($login)]);
-    }
     public function findByGroup(int $groupId): array
     {
         return $this->createQueryBuilder('s')

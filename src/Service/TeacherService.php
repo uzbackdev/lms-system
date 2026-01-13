@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\DeadlineSubmission;
 use App\Entity\GroupSubjectTeacher;
 use App\Entity\Person;
+use App\Entity\Teacher;
 use App\Repository\DeadlineSubmissionRepository;
 use App\Repository\GroupRepository;
 use App\Repository\GroupSubjectTeacherRepository;
@@ -13,12 +14,13 @@ use App\Repository\StudentRepository;
 use App\Repository\SubjectRepository;
 use App\Repository\TeacherRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Random\RandomException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class TeacherService
 {
     public function __construct(
-        private UserPasswordHasherInterface $passwordHasher,
+
         private GroupRepository $groupRepository,
         private SubjectRepository $subjectRepository,
         private TeacherRepository $teacherRepository,
@@ -30,36 +32,51 @@ class TeacherService
         private LessonPlanService $lessonPlanService
     ) {}
 
-    public function generateLogin(int $teacherId): string
+    public function generateLogin(): string
     {
-        return 'teacher' . $teacherId;
-    }
 
-    public function generatePassword(int $teacherId): string
-    {
-        return 'password' . $teacherId;
-    }
+        $characters = 'ABCDEFGHIJKLMNLMNOPQRSTUVWXYZ0123456789';
+        $login = '';
+        $max = strlen($characters) - 1;
 
-    public function createPersonWithAuth(int $teacherId): array
-    {
-        $login = $this->generateLogin($teacherId);
-        $plainPassword = $this->generatePassword($teacherId);
+        for ($i = 0; $i < 8; $i++) {
+            $login .= $characters[random_int(0, $max)];
+        }
 
-        $person = new Person();
-        $person->setLogin($login);
-        $person->setPassword($this->passwordHasher->hashPassword($person, $plainPassword));
-        $person->setRoles(['ROLE_TEACHER']);
-
-        return [
-            'person' => $person,
-            'plain_password' => $plainPassword,
-            'login' => $login
-        ];
+        return $login;
     }
 
     /**
-     * @throws \Exception
+     * @throws RandomException
      */
+    public function generatePassword(): string
+    {
+
+        $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        $password = '';
+        $max = strlen($characters) - 1;
+
+        for ($i = 0; $i < 8; $i++) {
+            $password .= $characters[random_int(0, $max)];
+        }
+
+
+        if (!preg_match('/[0-9]/', $password)) {
+            $password[7] = (string) random_int(0, 9);
+        }
+
+        return $password;
+    }
+
+    /**
+     * @param Teacher $teacher
+     * @param string $name
+     * @param string $surname
+     * @return array
+     */
+
+
+
     public function getGroupStudents(int $teacherId, int $groupId, int $subjectId): array
     {
         $group = $this->groupRepository->find($groupId);
@@ -149,9 +166,7 @@ class TeacherService
         };
     }
 
-    /**
-     * Submission ma'lumotlarini qurish
-     */
+
     public function buildSubmissionData(?DeadlineSubmission $submission, $deadline): array
     {
         $baseData = [
@@ -184,9 +199,7 @@ class TeacherService
         return $baseData;
     }
 
-    /**
-     * Baholash matritsasini qurish
-     */
+
     public function buildGradingMatrix(GroupSubjectTeacher $gst): array
     {
         $deadlines = $gst->getDeadlines();
@@ -213,7 +226,6 @@ class TeacherService
                 $submissionData = $this->buildSubmissionData($submission, $deadline);
                 $studentData['submissions'][] = $submissionData;
 
-                // Umumiy ballarni hisoblash
                 if ($submissionData['current_points'] !== null) {
                     $studentData['total_points'] += $submissionData['current_points'];
                 }
@@ -226,9 +238,7 @@ class TeacherService
         return $matrixData;
     }
 
-    /**
-     * Baholash validatsiyasi
-     */
+
     public function validateGrading(DeadlineSubmission $submission, int $points, string $method): array
     {
         $maxPoints = $submission->getDeadline()->getMaxPoints();
@@ -257,22 +267,18 @@ class TeacherService
         ];
     }
 
-    /**
-     * GST ma'lumotlarini olish
-     */
+
     public function getGSTInfo(GroupSubjectTeacher $gst): array
     {
         return [
             'id' => $gst->getId(),
             'group_number' => $gst->getGroup()->getGroupNumber(),
             'subject_name' => $gst->getSubject()->getSubjectName(),
-            'teacher_name' => $gst->getTeacher()->getName() . ' ' . $gst->getTeacher()->getSurname()
+            'teacher_name' => $gst->getTeacher()->getPerson()->getName() . ' ' . $gst->getTeacher()->getPerson()->getSurname()
         ];
     }
 
-    /**
-     * Deadline lar ro'yxatini tayyorlash
-     */
+
     public function prepareDeadlinesList(array $deadlines): array
     {
         return array_map(function($deadline) {
